@@ -1,66 +1,93 @@
+import {
+    _createElement,
+    _addEventKeyDown,
+    _addEventClick,
+    _addEventEnded,
+    _getById,
+    _find,
+    _getSoundByLink,
+    _removeClass,
+    _addClass
+} from './utils';
+
 export class Soundboard {
     sounds = [];
 
-    constructor(sounds){
+    /*
+        @param data: sounds[]
+    */
+    constructor(sounds) {
         this.sounds = sounds;
-        document.addEventListener('keydown', this.handleKeyDown.bind(this));
+        _addEventKeyDown(document, this.handleKeyDown.bind(this));
     }
 
-    handleKeyDown(event){
-        let code = event.keyCode;
-        let isAudioExist = this.sounds.find(sound => sound.keyCode === code);
-        if(isAudioExist){
-            let audio = new Audio(isAudioExist.link);
-            let buttonClassList = document.getElementById(code).classList;
-            audio.currentTime = 0;
-            buttonClassList.add('sound-active');
-            audio.play();
-            audio.addEventListener('ended', () => {
-                buttonClassList.remove('sound-active');
+    /*
+        Event keyboard 
+    */
+    handleKeyDown(event) {
+        let key = event.key;
+        this.play(key);
+    }
+
+    /*
+        Event button click
+    */
+    handleClick(event) {
+        let key = event.target.getAttribute('id');
+        this.play(key);
+    }
+
+    /*
+        Play sound
+        @param code: string
+    */
+    play(key) {
+        let soundByKey = this.sounds.find(sound => sound.key == key);
+        if (soundByKey) {
+            let sound = _getSoundByLink(soundByKey.link),
+                button = _getById(key);
+                sound.currentTime = 0;
+                sound.play();
+            _addClass(button, 'sound-active');
+            _addEventEnded(sound, () => {
+                _removeClass(button, 'sound-active');
             });
-       }
+        }
     }
 
-    handleClick(event){
-        let code = event.target.getAttribute('id');
-        let isAudioExist = this.sounds.find(sound => sound.keyCode == code);
-
-        if(isAudioExist){
-            let audio = new Audio(isAudioExist.link);
-            let buttonClassList = document.getElementById(code).classList;
-            audio.currentTime = 0;
-            buttonClassList.add('sound-active');
-            audio.play();
-            audio.addEventListener('ended', () => {
-                buttonClassList.remove('sound-active');
-            });
-       }
-    }
-
-    createListSound(){
-        let btnSection = document.querySelector('#btn-section');
-        this.sounds.map(drum => {
-            let container = this.createContainerSound('div');
-            let button = this.createButtonSound(drum);
-            button.addEventListener('click', this.handleClick.bind(this));
-            container.append(button);  
-            btnSection.append(container);   
+    /*
+        Create sound list
+    */
+    createListSounds() {
+        let btnSection = _find('#btn-section');
+        this.sounds.map(sound => {
+            let container = this.createContainer('div'),
+                button = this.createButton(sound);
+            _addEventClick(button, this.handleClick.bind(this));
+            container.append(button);
+            btnSection.append(container);
         });
     }
 
-    createButtonSound(drum){
-        let button = document.createElement('button');
-            button.textContent = `Press ${drum.id.toLowerCase()}`;
-            button.id = drum.keyCode;
+    /*
+        Create button element 
+        @param sound: sound{}
+    */
+    createButton(sound) {
+        let button = _createElement('button');
+        button.textContent = `Press "${sound.key}"`;
+        button.id = sound.key;
         return button;
-    }      
+    }
 
-    createContainerSound(){
-        let div = document.createElement('div');
-            div.className = "btn-container";
-            return div;
+    /*
+        Create container element
+    */
+    createContainer() {
+        let div = _createElement('div');
+        div.className = "btn-container";
+        return div;
     }
 }
-
 
 

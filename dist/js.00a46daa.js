@@ -117,13 +117,66 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"js/functions.js":[function(require,module,exports) {
+})({"js/utils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports._addEventClick = _addEventClick;
+exports._addEventKeyDown = _addEventKeyDown;
+exports._addEventEnded = _addEventEnded;
+exports._getSoundByLink = _getSoundByLink;
+exports._getById = _getById;
+exports._find = _find;
+exports._createElement = _createElement;
+exports._removeClass = _removeClass;
+exports._addClass = _addClass;
+
+function _addEventClick(element, func) {
+  element.addEventListener('click', func);
+}
+
+function _addEventKeyDown(element, func) {
+  element.addEventListener('keydown', func);
+}
+
+function _addEventEnded(element, func) {
+  element.addEventListener('ended', func);
+}
+
+function _getSoundByLink(link) {
+  return new Audio(link);
+}
+
+function _getById(id) {
+  return document.getElementById(id);
+}
+
+function _find(selector) {
+  return document.querySelector(selector);
+}
+
+function _createElement(name) {
+  return document.createElement(name);
+}
+
+function _removeClass(element, className) {
+  return element.classList.remove(className);
+}
+
+function _addClass(element, className) {
+  return element.classList.add(className);
+}
+},{}],"js/functions.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Soundboard = void 0;
+
+var _utils = require("./utils");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -134,81 +187,101 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var Soundboard = /*#__PURE__*/function () {
+  /*
+      @param data: sounds[]
+  */
   function Soundboard(sounds) {
     _classCallCheck(this, Soundboard);
 
     _defineProperty(this, "sounds", []);
 
     this.sounds = sounds;
-    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    (0, _utils._addEventKeyDown)(document, this.handleKeyDown.bind(this));
   }
+  /*
+      Event keyboard 
+  */
+
 
   _createClass(Soundboard, [{
     key: "handleKeyDown",
     value: function handleKeyDown(event) {
-      var code = event.keyCode;
-      var isAudioExist = this.sounds.find(function (sound) {
-        return sound.keyCode === code;
-      });
-
-      if (isAudioExist) {
-        var audio = new Audio(isAudioExist.link);
-        var buttonClassList = document.getElementById(code).classList;
-        audio.currentTime = 0;
-        buttonClassList.add('sound-active');
-        audio.play();
-        audio.addEventListener('ended', function () {
-          buttonClassList.remove('sound-active');
-        });
-      }
+      var key = event.key;
+      this.play(key);
     }
+    /*
+        Event button click
+    */
+
   }, {
     key: "handleClick",
     value: function handleClick(event) {
-      var code = event.target.getAttribute('id');
-      var isAudioExist = this.sounds.find(function (sound) {
-        return sound.keyCode == code;
+      var key = event.target.getAttribute('id');
+      this.play(key);
+    }
+    /*
+        Play sound
+        @param code: string
+    */
+
+  }, {
+    key: "play",
+    value: function play(key) {
+      var soundByKey = this.sounds.find(function (sound) {
+        return sound.key == key;
       });
 
-      if (isAudioExist) {
-        var audio = new Audio(isAudioExist.link);
-        var buttonClassList = document.getElementById(code).classList;
-        audio.currentTime = 0;
-        buttonClassList.add('sound-active');
-        audio.play();
-        audio.addEventListener('ended', function () {
-          buttonClassList.remove('sound-active');
+      if (soundByKey) {
+        var sound = (0, _utils._getSoundByLink)(soundByKey.link),
+            button = (0, _utils._getById)(key);
+        sound.currentTime = 0;
+        sound.play();
+        (0, _utils._addClass)(button, 'sound-active');
+        (0, _utils._addEventEnded)(sound, function () {
+          (0, _utils._removeClass)(button, 'sound-active');
         });
       }
     }
+    /*
+        Create sound list
+    */
+
   }, {
-    key: "createListSound",
-    value: function createListSound() {
+    key: "createListSounds",
+    value: function createListSounds() {
       var _this = this;
 
-      var btnSection = document.querySelector('#btn-section');
-      this.sounds.map(function (drum) {
-        var container = _this.createContainerSound('div');
+      var btnSection = (0, _utils._find)('#btn-section');
+      this.sounds.map(function (sound) {
+        var container = _this.createContainer('div'),
+            button = _this.createButton(sound);
 
-        var button = _this.createButtonSound(drum);
-
-        button.addEventListener('click', _this.handleClick.bind(_this));
+        (0, _utils._addEventClick)(button, _this.handleClick.bind(_this));
         container.append(button);
         btnSection.append(container);
       });
     }
+    /*
+        Create button element 
+        @param sound: sound{}
+    */
+
   }, {
-    key: "createButtonSound",
-    value: function createButtonSound(drum) {
-      var button = document.createElement('button');
-      button.textContent = "Press ".concat(drum.id.toLowerCase());
-      button.id = drum.keyCode;
+    key: "createButton",
+    value: function createButton(sound) {
+      var button = (0, _utils._createElement)('button');
+      button.textContent = "Press \"".concat(sound.key, "\"");
+      button.id = sound.key;
       return button;
     }
+    /*
+        Create container element
+    */
+
   }, {
-    key: "createContainerSound",
-    value: function createContainerSound() {
-      var div = document.createElement('div');
+    key: "createContainer",
+    value: function createContainer() {
+      var div = (0, _utils._createElement)('div');
       div.className = "btn-container";
       return div;
     }
@@ -218,50 +291,50 @@ var Soundboard = /*#__PURE__*/function () {
 }();
 
 exports.Soundboard = Soundboard;
-},{}],"js/index.js":[function(require,module,exports) {
+},{"./utils":"js/utils.js"}],"js/index.js":[function(require,module,exports) {
 "use strict";
 
 var _functions = require("./functions");
 
 //import moment from 'moment' 
-var audios = [{
-  id: 'A',
-  keyCode: 65,
+var sounds = [{
+  id: null,
+  key: 'a',
   link: '/sounds/Batterie_de_blague.mp3'
 }, {
-  id: 'Z',
-  keyCode: 90,
+  id: null,
+  key: 'z',
   link: '/sounds/Baguettes_de_batterie_3.mp3'
 }, {
-  id: 'E',
-  keyCode: 69,
+  id: null,
+  key: 'e',
   link: '/sounds/Caisse_claire_1.mp3'
 }, {
-  id: 'R',
-  keyCode: 82,
+  id: null,
+  key: 'r',
   link: '/sounds/Charleston_4.mp3'
 }, {
-  id: 'T',
-  keyCode: 84,
+  id: null,
+  key: 't',
   link: '/sounds/Charleston_fermee_3.mp3'
 }, {
-  id: 'Y',
-  keyCode: 89,
+  id: null,
+  key: 'y',
   link: '/sounds/Cymbale_ride_4.mp3'
 }, {
-  id: 'U',
-  keyCode: 85,
+  id: null,
+  key: 'u',
   link: '/sounds/Tom_aigu_1.mp3'
 }, {
-  id: 'I',
-  keyCode: 73,
+  id: null,
+  key: 'i',
   link: '/sounds/Tom_grave_1.mp3'
 }, {
-  id: 'O',
-  keyCode: 79,
+  id: null,
+  key: 'o',
   link: '/sounds/Tom_grave_4.mp3'
 }];
-new _functions.Soundboard(audios).createListSound();
+new _functions.Soundboard(sounds).createListSounds();
 },{"./functions":"js/functions.js"}],"../../../../.nvm/versions/node/v14.10.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -290,7 +363,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57203" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57433" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

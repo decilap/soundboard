@@ -45,6 +45,7 @@ main {
 button {
   height: 100px;
   width: 100px;
+  cursor: pointer;
   background-color: #1E1E1E;
   color: white;
   border: none;
