@@ -54,6 +54,7 @@ button {
   font-size: 1rem;
   box-shadow:-1px -1px 5px #4B5EFC, -2px -10px 5px #5140FE, 0 -10px 5px #AE1ECB, 3px 6px 5px #D523A3, 1px 1px 5px #FE277E;
   transition: all ease-in-out;
+  outline: none;
 }
 
 button.sound-active {
