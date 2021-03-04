@@ -12,8 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/preset-react": "^7.12.13",
-    "moment": "^2.29.1"
+    "@babel/preset-react": "^7.12.13"
   },
   "staticFiles": {
     "staticPath": [

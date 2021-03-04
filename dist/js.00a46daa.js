@@ -168,7 +168,7 @@ function _removeClass(element, className) {
 function _addClass(element, className) {
   return element.classList.add(className);
 }
-},{}],"js/functions.js":[function(require,module,exports) {
+},{}],"js/soundboard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -232,12 +232,12 @@ var Soundboard = /*#__PURE__*/function () {
       });
 
       if (soundByKey) {
-        var sound = (0, _utils._getSoundByLink)(soundByKey.link),
+        var audio = (0, _utils._getSoundByLink)(soundByKey.link),
             button = (0, _utils._getById)(key);
-        sound.currentTime = 0;
-        sound.play();
+        audio.currentTime = 0;
+        audio.play();
         (0, _utils._addClass)(button, 'sound-active');
-        (0, _utils._addEventEnded)(sound, function () {
+        (0, _utils._addEventEnded)(audio, function () {
           (0, _utils._removeClass)(button, 'sound-active');
         });
       }
@@ -294,9 +294,8 @@ exports.Soundboard = Soundboard;
 },{"./utils":"js/utils.js"}],"js/index.js":[function(require,module,exports) {
 "use strict";
 
-var _functions = require("./functions");
+var _soundboard = require("./soundboard");
 
-//import moment from 'moment' 
 var sounds = [{
   id: null,
   key: 'a',
@@ -334,8 +333,8 @@ var sounds = [{
   key: 'o',
   link: '/sounds/Tom_grave_4.mp3'
 }];
-new _functions.Soundboard(sounds).createListSounds();
-},{"./functions":"js/functions.js"}],"../../../../.nvm/versions/node/v14.10.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+new _soundboard.Soundboard(sounds).createListSounds();
+},{"./soundboard":"js/soundboard.js"}],"../../../../.nvm/versions/node/v14.10.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -363,7 +362,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57433" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51608" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

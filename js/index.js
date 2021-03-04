@@ -1,6 +1,4 @@
-import { Soundboard } from './functions';
-//import moment from 'moment' 
-
+import { Soundboard } from './soundboard';
 
 const sounds = [
     {
@@ -49,4 +47,5 @@ const sounds = [
         link: '/sounds/Tom_grave_4.mp3',
     }
 ];
+
 (new Soundboard(sounds)).createListSounds();

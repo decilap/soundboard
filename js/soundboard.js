@@ -2,12 +2,12 @@ import {
     _createElement,
     _addEventKeyDown,
     _addEventClick,
-    _addEventEnded,
+    _getSoundByLink,
     _getById,
     _find,
-    _getSoundByLink,
+    _addClass,
+    _addEventEnded,
     _removeClass,
-    _addClass
 } from './utils';
 
 export class Soundboard {
@@ -44,12 +44,12 @@ export class Soundboard {
     play(key) {
         let soundByKey = this.sounds.find(sound => sound.key == key);
         if (soundByKey) {
-            let sound = _getSoundByLink(soundByKey.link),
+            let audio = _getSoundByLink(soundByKey.link),
                 button = _getById(key);
-                sound.currentTime = 0;
-                sound.play();
+                audio.currentTime = 0;
+                audio.play();
             _addClass(button, 'sound-active');
-            _addEventEnded(sound, () => {
+            _addEventEnded(audio, () => {
                 _removeClass(button, 'sound-active');
             });
         }
